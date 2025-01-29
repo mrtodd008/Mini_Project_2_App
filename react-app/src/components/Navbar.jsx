@@ -7,11 +7,13 @@ import {
   MenuItem,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 function Navbar() {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
+  const navigate = useNavigate(); // Initialize useNavigate for navigation
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -21,18 +23,28 @@ function Navbar() {
     setAnchorEl(null);
   };
 
+  const handleLogin = () => {
+    handleMenuClose();
+    navigate("/login"); // Navigate to login screen
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false); // Simulate logout action
+    handleMenuClose();
+    navigate("/login"); // Navigate to login screen after logout
+  };
+
   return (
     <AppBar position="static" style={{ backgroundColor: "#007bff" }}>
       <Toolbar>
         {/* Logo or App Name */}
         <Typography
           variant="h6"
-          component="div"
-          sx={{ flexGrow: 1, textDecoration: "none", color: "white" }}
-          as={Link}
+          component={Link}
           to="/"
+          sx={{ flexGrow: 1, textDecoration: "none", color: "white" }}
         >
-          My App
+          DJ App
         </Typography>
 
         {/* Desktop Links */}
@@ -67,7 +79,9 @@ function Navbar() {
           color="inherit"
           aria-label="menu"
           onClick={handleMenuOpen}
-          sx={{ display: { sm: "none" } }}
+          sx={{
+            display: { xs: "block", sm: "none" }, // Ensure visibility on small screens
+          }}
         >
           <MenuIcon />
         </IconButton>
@@ -84,9 +98,19 @@ function Navbar() {
           <MenuItem onClick={handleMenuClose} component={Link} to="/profile">
             Profile
           </MenuItem>
+          <MenuItem onClick={handleMenuClose} component={Link} to="/events">
+            Events
+          </MenuItem>
           <MenuItem onClick={handleMenuClose} component={Link} to="/admin">
             Admin
           </MenuItem>
+
+          {/* Login/Logout Button */}
+          {isLoggedIn ? (
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          ) : (
+            <MenuItem onClick={handleLogin}>Login</MenuItem>
+          )}
         </Menu>
       </Toolbar>
     </AppBar>
